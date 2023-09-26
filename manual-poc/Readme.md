@@ -1,15 +1,17 @@
 # Manual Microservices with Node.js and React
 
-This repository hosts a simple project designed to teach the basics of building a microservices-based application. The project was written from scratch, utilizing a minimalistic approach with lightweight libraries such as Express, CORS, and Axios. The primary goal is to understand microservices under the hood without being overwhelmed by complex tools and setups.
+This repository hosts a simple project designed to teach the basics of building a microservices-based application. The project was written from scratch, utilizing a minimalistic approach with lightweight libraries such as Express, CORS, and Axios. The primary goal is to understand microservices under the hood without being overwhelmed by complex tools and setups. 
 
 ## Overview
 
-The project consists of a basic blog application. The backend is built using a microservices architecture while the frontend is powered by React.
+The project consists of a basic blog application. The backend is built using a microservices architecture while the frontend is powered by React. For orchestration of the services I'm using Kubernetes.
 
 ### Directory Structure
 
 ```
 .
+├── infra
+│   ├── k8s
 ├── services
 │   ├── post
 │   ├── comments
@@ -31,6 +33,11 @@ The project consists of a basic blog application. The backend is built using a m
   
 - **Event Bus Service**: Acts as a communication layer among services. Whenever an event is published (like `PostCreation`), it broadcasts that event to all other services.
 
+### Infra Layer
+
+Each service has his own k8s deployment file, each deployment file contains a Deployment config with a reference to the container we are pulling the image from, and a service exposing that service to other services via an ClusterIP.
+
+In order to our front-end service receives traffic from the external world we use a Load balancer that will redirect the traffic to an `Ingress Controller` inside our cluster that will be responsible for distribute the request into our pods. The `Ingress Controller` that we are using is called [Ingress-Nginx Controller](https://kubernetes.github.io/ingress-nginx/deploy/).
 ### Blog-Client
 
 The `blog-client` directory contains a React application which serves as the frontend of the blog. It communicates with the various services to fetch, display, and send data to the backend.
